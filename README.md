@@ -4,6 +4,7 @@
 
 - Python 3.14 (developed and tested with Python 3.14.3)
 - Git
+- An OpenAI API key
 
 ## Setup on Windows (PowerShell)
 
@@ -20,38 +21,64 @@
    py -3.14 --version
    ```
 
-3. Create a virtual environment for this project:
+3. Create and activate a project virtual environment:
 
    ```powershell
    py -3.14 -m venv .venv
-   ```
-
-4. Activate it in the current PowerShell session:
-
-   ```powershell
    .\.venv\Scripts\Activate.ps1
    ```
 
-   The prompt should now start with `(.venv)`. Activate the environment again
-   whenever you open a new terminal session.
+   The prompt should start with `(.venv)`. Activate the environment again in
+   each new terminal session.
 
-5. Install the project dependencies:
+4. Install the project dependencies:
 
    ```powershell
    python -m pip install -r requirements.txt
    ```
 
+5. Create a local environment file from the example:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Edit `.env` and set:
+
+   - `OPENAI_API_KEY` to your OpenAI API key.
+   - `OPENAI_MODEL` to a model available to your OpenAI project. example: gpt-5.6-luna
+   - `BACKEND_ACCESS_TOKEN` to a long, random token used by clients to access
+     this backend.
+
+   Keep `.env` private; it is excluded from Git.
+
+   Alternative to hide OPENAI_API_KEY from your dev AI:
+
+   ```powershell
+   $secureKey = Read-Host "OpenAI API key" -AsSecureString
+   $env:OPENAI_API_KEY = (New-Object System.Net.NetworkCredential("", $secureKey)). Password
+   $env:OPENAI_MODEL = "HIER_DEIN_MODELLNAME"
+   $env:BACKEND_ACCESS_TOKEN = python -c "import secrets; print(secrets.   token_urlsafe(32))"
+   $env:BACKEND_ACCESS_TOKEN
+   ```
+
 ## Run the development server
 
-With the virtual environment activated, run:
+With the virtual environment activated and `.env` configured, run:
+
+```powershell
+python -m uvicorn main:app --reload --env-file .env
+```
+
+or if you set the secrets manually in the powershell session just run
 
 ```powershell
 python -m uvicorn main:app --reload
 ```
 
-Open `http://127.0.0.1:8000/health` to check the health endpoint, or
-`http://127.0.0.1:8000/docs` to view the interactive API documentation.
-Press `Ctrl+C` in the terminal to stop the server.
+Open `http://127.0.0.1:8000/docs` for the interactive API documentation.
+`GET /health` checks that the backend is running.
 
-The current application contains a health endpoint. Authentication and the
-OpenAI Responses API integration have not been added yet.
+Click "Authorize" and enter the BACKEND_ACCESS_TOKEN value to test the endpoints requiring authorization. 
+
+Press `Ctrl+C` in the terminal to stop the server.
