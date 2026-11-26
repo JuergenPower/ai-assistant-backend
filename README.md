@@ -82,3 +82,7 @@ Open `http://127.0.0.1:8000/docs` for the interactive API documentation.
 Click "Authorize" and enter the BACKEND_ACCESS_TOKEN value to test the endpoints requiring authorization. 
 
 Press `Ctrl+C` in the terminal to stop the server.
+
+The backend allows browser requests from the frontend origin
+`http://localhost:5173` during development. If the frontend uses a different
+origin, update `allow_origins` in `main.py` to match it.
