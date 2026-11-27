@@ -4,7 +4,6 @@ from functools import lru_cache
 from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from openai import APIError
 from pydantic import BaseModel, Field
@@ -13,12 +12,6 @@ from llm_provider import OpenAIResponsesProvider, ProviderConfigurationError
 from llm_types import LLMMessage
 
 app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_methods=["GET", "POST"],
-    allow_headers=["Authorization", "Content-Type"],
-)
 bearer_scheme = HTTPBearer(auto_error=False)
 
 

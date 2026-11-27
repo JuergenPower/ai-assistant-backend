@@ -83,6 +83,24 @@ Click "Authorize" and enter the BACKEND_ACCESS_TOKEN value to test the endpoints
 
 Press `Ctrl+C` in the terminal to stop the server.
 
-The backend allows browser requests from the frontend origin
-`http://localhost:5173` during development. If the frontend uses a different
-origin, update `allow_origins` in `main.py` to match it.
+## Build and publish the backend image
+
+Build and run the image locally from the repository root:
+
+```powershell
+docker build -t ai-assistant-backend:local .
+docker run --rm --env-file .env -p 8000:8000 ai-assistant-backend:local
+```
+
+The image does not contain `.env` or application secrets. Pass configuration
+such as `OPENAI_API_KEY`, `OPENAI_MODEL`, and `BACKEND_ACCESS_TOKEN` when the
+container is run.
+
+To publish an image manually, open **Actions**, select **Build and publish
+backend image**, and choose **Run workflow**. The workflow publishes
+`ghcr.io/juergenpower/ai-assistant-backend` with both a `latest` tag and a
+commit-SHA tag. The workflow does not run on pushes.
+
+After the first successful publish, change the package visibility to **Public**
+in the package settings on GitHub if the VPS should pull the image without
+authenticating.
